@@ -2,12 +2,13 @@ import json
 import argparse
 import os
 import sys
+import re
 
 class MRCFile:
     def __init__(self, title: str, author: str, path: str, description: str = 'Generic Description'):
         if path[-1] != '/':
             path += '/'
-        path += title + '.mrc'
+        path += re.sub(r'\W+', '_', title, flags=re.UNICODE) + '.mrc'
         self.__file = open(path, 'wb+')
         self.__time = 0.0
         self.__write_header(title, description)
@@ -49,11 +50,12 @@ def generate(Input : str, Output : str, WipeFile : bool):
         d = path + point['creator']
         if not os.path.isdir(d):
             os.makedirs(d)
-            if WipeFile:
+        if WipeFile:
+            if not os.path.isdir(d + '/wipe'):
                 os.makedirs(d + '/wipe')
+            open('{}/wipe/{}.mrc'.format(d,point['title']), 'wb+').close()
+            open('{}/wipe/{}.mrc.plan'.format(d,point['title']), 'wb+').close()
         f = MRCFile(point['title'], point['creator'], d)
-        open('{}/wipe/{}.mrc'.format(d,point['title']), 'wb+').close()
-        open('{}/wipe/{}.mrc.plan'.format(d,point['title']), 'wb+').close()
         for interval in point['MRC']:
             f.add_data(float(interval[0]), interval[1], interval[2])
     return 0
@@ -77,7 +79,7 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--WipeFile', action='store_true', default=False,
-        help='Generate empty files to delete workouts from the a Wahoo device'
+        help='Generate empty files to delete workouts from a Wahoo device'
     )
     args = parser.parse_args()    
     generate(args.Input, args.Output, args.WipeFile)
