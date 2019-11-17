@@ -46,7 +46,9 @@ def generate(Input : str, Output : str, WipeFile : bool):
     path = Output
     if Output[-1] != '/':
         path += '/'
-    for point in data:  
+    for point in data:
+        if len(point['MRC']) == 0:
+            continue
         d = path + point['creator']
         if not os.path.isdir(d):
             os.makedirs(d)
