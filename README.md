@@ -1,4 +1,4 @@
-# Erg Repo
+# Workout Scraper
 
 A collection of Webcrawler that scrape data from [ErgDB](https://ergdb.org/) and
 [What On Zwift](https://whatsonzwift.com/)
